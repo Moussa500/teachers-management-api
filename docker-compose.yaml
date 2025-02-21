@@ -1,0 +1,10 @@
+services:
+  teacher-db:
+    image: postgres
+    ports:
+      - 5434:5432
+    environment:
+      POSTGRES_USER: moussa
+      POSTGRES_PASSWORD: hisoka720
+      POSTGRES_DB: teacher_database
+

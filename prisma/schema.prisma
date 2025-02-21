@@ -1,0 +1,80 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+model Teacher {
+  cin            String         @unique
+  email          String         @unique
+  name           String
+  password       String
+  phoneNumber    String?
+  subjects       Subject[]
+  availabitilies Availability[]
+  lessons        Lesson[]
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @updatedAt
+}
+model Availability {
+  id         String   @id @default(cuid())
+  teacher    Teacher  @relation(fields: [teacherCin], references: [cin])
+  teacherCin String
+  day        String
+  startHour  String
+  endHour    String
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}
+model Subject {
+  id           String   @id @default(cuid()) @unique
+  name         String
+  creditHours  Int
+  pricePerHour Float
+  studyPlan    String
+  teacher      Teacher  @relation(fields: [teacherCin], references: [cin])
+  teacherCin   String
+  groups       Group[]
+  lesson       Lesson? 
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+model Group{
+  id           String   @id @default(cuid())
+  name         String
+  subject      Subject  @relation(fields: [subjectId], references: [id])
+  lesson       Lesson[]
+  subjectId    String
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+model ClassRoom {
+  id         String   @id @default(cuid())
+  name       String
+  Lesson     Lesson?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}
+model Lesson {
+  group        Group    @relation(fields: [groupId], references: [id])
+  groupId      String 
+  teacher      Teacher  @relation(fields: [teacherCin], references: [cin])
+  classRoom   ClassRoom @relation(fields: [classRoomId],references: [id])
+  classRoomId String @unique
+  teacherCin   String 
+  subject Subject @relation(fields: [subjectId], references: [id])
+  subjectId    String @unique
+  day          String
+  startHour    String
+  endHour      String
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  @@unique([groupId,teacherCin,subjectId,classRoomId])
+}
