@@ -8,7 +8,7 @@ export class TeacherService {
   constructor(private prismaService: PrismaService) { }
   async create(dtos: CreateTeacherDto[]) {
     const teacher = await this.prismaService.teacher.createMany({
-      data: dtos.map(dto=>({
+      data: dtos.map(dto => ({
         cin: dto.cin,
         name: dto.name,
         email: dto.email,
@@ -21,7 +21,7 @@ export class TeacherService {
   async findAll() {
     return await this.prismaService.teacher.findMany();
   }
-
+  
   async findOne(cin: string) {
     const teacher = await this.prismaService.teacher.findUnique({
       where: {

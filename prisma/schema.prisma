@@ -7,10 +7,12 @@
 generator client {
   provider = "prisma-client-js"
 }
+
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+
 model Teacher {
   cin            String         @unique
   email          String         @unique
@@ -23,8 +25,9 @@ model Teacher {
   createdAt      DateTime       @default(now())
   updatedAt      DateTime       @updatedAt
 }
+
 model Availability {
-  id         String   @id  @default(cuid())
+  id         String   @id @default(cuid())
   teacher    Teacher  @relation(fields: [teacherCin], references: [cin])
   teacherCin String
   day        String
@@ -33,48 +36,65 @@ model Availability {
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
 }
+
 model Subject {
-  id           String   @id @default(cuid()) @unique
+  id           String   @id @unique @default(cuid())
   name         String
   creditHours  Int
   pricePerHour Float
   studyPlan    String
   teacher      Teacher  @relation(fields: [teacherCin], references: [cin])
   teacherCin   String
-  groups       Group[]
-  lesson       Lesson? 
+  group        Group[]
+  lesson       Lesson?
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 }
-model Group{
-  id           String   @id @default(cuid())
-  name         String
-  subject      Subject  @relation(fields: [subjectId], references: [id])
-  lesson       Lesson[]
-  subjectId    String
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
+
+model Group {
+  id        String    @id @default(cuid())
+  name      String
+  subject   Subject?  @relation(fields: [subjectId], references: [id])
+  lesson    Lesson[]
+  student   Student[]
+  subjectId String
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
 }
+
+model Student {
+  cin         String   @unique
+  name        String
+  phoneNumber String   @unique
+  email       String   @unique
+  groupId     String?
+  group       Group?   @relation(fields: [groupId], references: [id])
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
 model ClassRoom {
-  id         String   @id @default(cuid())
-  name       String
-  Lesson     Lesson?
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
+  id        String   @id @default(cuid())
+  name      String
+  Lesson    Lesson?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
+
 model Lesson {
-  group        Group    @relation(fields: [groupId], references: [id])
-  groupId      String 
-  teacher      Teacher  @relation(fields: [teacherCin], references: [cin])
-  classRoom   ClassRoom @relation(fields: [classRoomId],references: [id])
-  classRoomId String @unique
-  teacherCin   String 
-  subject Subject @relation(fields: [subjectId], references: [id])
-  subjectId    String @unique
-  day          String
-  startHour    String
-  endHour      String
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
-  @@unique([groupId,teacherCin,subjectId,classRoomId])
+  group       Group     @relation(fields: [groupId], references: [id])
+  groupId     String
+  teacher     Teacher   @relation(fields: [teacherCin], references: [cin])
+  classRoom   ClassRoom @relation(fields: [classRoomId], references: [id])
+  classRoomId String    @unique
+  teacherCin  String
+  subject     Subject   @relation(fields: [subjectId], references: [id])
+  subjectId   String    @unique
+  day         String
+  startHour   String
+  endHour     String
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@unique([groupId, teacherCin, subjectId, classRoomId])
 }
