@@ -1,9 +1,10 @@
-import { IsEmail, IsNumberString } from "class-validator"
+import { IsEmail, IsNumberString, IsOptional } from "class-validator"
 
 export class CreateStudentDto {
     cin:string
-    name:string
-    groupId:string
+    name: string
+    @IsOptional()
+    groupName:string
     @IsEmail()
     email:string
     @IsNumberString()

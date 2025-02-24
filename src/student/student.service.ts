@@ -2,6 +2,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateStudentDto } from './dto/create-student.dto';
 import { UpdateStudentDto } from './dto/update-student.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { group } from 'console';
 
 @Injectable()
 export class StudentService {
@@ -11,6 +12,7 @@ export class StudentService {
       data: dtos.map(dto => ({
         cin: dto.cin,
         name: dto.name,
+        groupName: dto.groupName,
         email: dto.email,
         phoneNumber: dto.phoneNumber,
       }))
@@ -28,10 +30,11 @@ export class StudentService {
     return student;
   }
   async update(cin: string, dto: UpdateStudentDto) {
-    const studentExist = this.findOne(cin);
+    const studentExist = await this.findOne(cin);
     if (studentExist == null) {
       throw new NotFoundException("this student doasn't exist");
     }
+    console.log(dto.groupName);
     const student = await this.prismaService.student.update({
       where: {
         cin
@@ -40,6 +43,7 @@ export class StudentService {
         cin: dto.cin,
         name: dto.name,
         email: dto.email,
+        groupName: dto.groupName,
         phoneNumber: dto.phoneNumber,
       }
     })
@@ -50,7 +54,7 @@ export class StudentService {
     if (student == null) {
       throw new NotFoundException("this student doasn't exist");
     }
-    this.prismaService.student.delete({ where: { cin } });
+    await this.prismaService.student.delete({ where: { cin } });
     return { message: `Student with CIN ${cin} has been successfully deleted.` };
   }
 }

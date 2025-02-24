@@ -1,9 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -19,22 +13,22 @@ model Teacher {
   name           String
   password       String
   phoneNumber    String?
-  subjects       Subject[]
-  availabitilies Availability[]
-  lessons        Lesson[]
   createdAt      DateTime       @default(now())
   updatedAt      DateTime       @updatedAt
+  availabitilies Availability[]
+  lessons        Lesson[]
+  subjects       Subject[]
 }
 
 model Availability {
   id         String   @id @default(cuid())
-  teacher    Teacher  @relation(fields: [teacherCin], references: [cin])
   teacherCin String
   day        String
   startHour  String
   endHour    String
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
+  teacher    Teacher  @relation(fields: [teacherCin], references: [cin])
 }
 
 model Subject {
@@ -43,58 +37,57 @@ model Subject {
   creditHours  Int
   pricePerHour Float
   studyPlan    String
-  teacher      Teacher  @relation(fields: [teacherCin], references: [cin])
-  teacherCin   String
-  group        Group[]
-  lesson       Lesson?
+  teacherCin   String?
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
+  groupeName   String?
+  lesson       Lesson?
+  group        Group?   @relation(fields: [groupeName], references: [name])
+  teacher      Teacher?  @relation(fields: [teacherCin], references: [cin])
 }
 
 model Group {
   id        String    @id @default(cuid())
-  name      String
-  subject   Subject?  @relation(fields: [subjectId], references: [id])
-  lesson    Lesson[]
-  student   Student[]
-  subjectId String
+  name      String    @unique
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
+  lessons   Lesson[]
+  students  Student[]
+  subjects  Subject[]
 }
 
 model Student {
   cin         String   @unique
   name        String
-  phoneNumber String   @unique
-  email       String   @unique
-  groupId     String?
-  group       Group?   @relation(fields: [groupId], references: [id])
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+  email       String   @unique
+  phoneNumber String   @unique
+  groupName   String?
+  group       Group?   @relation(fields: [groupName], references: [name])
 }
 
 model ClassRoom {
   id        String   @id @default(cuid())
   name      String
-  Lesson    Lesson?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  Lesson    Lesson?
 }
 
 model Lesson {
-  group       Group     @relation(fields: [groupId], references: [id])
   groupId     String
-  teacher     Teacher   @relation(fields: [teacherCin], references: [cin])
-  classRoom   ClassRoom @relation(fields: [classRoomId], references: [id])
   classRoomId String    @unique
   teacherCin  String
-  subject     Subject   @relation(fields: [subjectId], references: [id])
   subjectId   String    @unique
   day         String
   startHour   String
   endHour     String
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
-
+  classRoom   ClassRoom @relation(fields: [classRoomId], references: [id])
+  group       Group     @relation(fields: [groupId], references: [id])
+  subject     Subject   @relation(fields: [subjectId], references: [id])
+  teacher     Teacher   @relation(fields:  [teacherCin], references: [cin])
   @@unique([groupId, teacherCin, subjectId, classRoomId])
 }
