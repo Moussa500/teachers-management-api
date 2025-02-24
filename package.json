@@ -7,8 +7,8 @@
   "license": "UNLICENSED",
   "scripts": {
     "prisma:dev:deploy": "npx prisma migrate deploy",
-    "db:dev:rm": "docker compose rm dev-db -s -f -v",
-    "db:dev:up": "docker compose up dev-db -d",
+    "db:dev:rm": "docker compose rm teacher-db -s -f -v",
+    "db:dev:up": "docker compose up teacher-db -d",
     "db:dev:restart": "npm run db:dev:rm && npm run db:dev:up && timeout /t 1 /nobreak && npm run prisma:dev:deploy",
     "build": "nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
@@ -29,6 +29,8 @@
     "@nestjs/mapped-types": "*",
     "@nestjs/platform-express": "^10.0.0",
     "@prisma/client": "^6.4.1",
+    "class-transformer": "^0.5.1",
+    "class-validator": "^0.14.1",
     "prisma": "^6.4.1",
     "reflect-metadata": "^0.2.0",
     "rxjs": "^7.8.1"

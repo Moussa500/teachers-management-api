@@ -1,37 +1,71 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateTeacherDto } from './dto/create-teacher.dto';
 import { UpdateTeacherDto } from './dto/update-teacher.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
 
 @Injectable()
 export class TeacherService {
-  constructor(private prismaService:PrismaService){}
-  async create(createTeacherDto: CreateTeacherDto) {
-    const teacher= await this.prismaService.teacher.create({
-        data:{
-            cin:createTeacherDto.cin,
-            name:createTeacherDto.name,
-            email:createTeacherDto.email,
-            password:createTeacherDto.password,
-            phoneNumber:createTeacherDto.phoneNumber,
-          }
-});
-return teacher;
-}
-
-  findAll() {
-    return `This action returns all teacher`;
+  constructor(private prismaService: PrismaService) { }
+  async create(dtos: CreateTeacherDto[]) {
+    const teacher = await this.prismaService.teacher.createMany({
+      data: dtos.map(dto=>({
+        cin: dto.cin,
+        name: dto.name,
+        email: dto.email,
+        password: dto.password,
+        phoneNumber: dto.phoneNumber,
+      }))
+    });
+    return teacher;
+  }
+  async findAll() {
+    return await this.prismaService.teacher.findMany();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} teacher`;
+  async findOne(cin: string) {
+    const teacher = await this.prismaService.teacher.findUnique({
+      where: {
+        cin
+      }
+    });
+    if (teacher == null) {
+      throw new NotFoundException("this Teacher doasn't exist");
+    }
+    return teacher;
   }
-
-  update(id: number, updateTeacherDto: UpdateTeacherDto) {
-    return `This action updates a #${id} teacher`;
+  async update(cin: string, updateTeacherDto: UpdateTeacherDto) {
+    const teacher = await this.findOne(cin);
+    if (teacher == null) {
+      throw new NotFoundException("this Teacher doasn't exist");
+    }
+    return await this.prismaService.teacher.update({
+      where: {
+        cin
+      },
+      data: {
+        cin: updateTeacherDto.cin,
+        email: updateTeacherDto.email,
+        name: updateTeacherDto.name,
+        phoneNumber: updateTeacherDto.phoneNumber,
+        password: updateTeacherDto.password,
+      }
+    });
   }
-
-  remove(id: number) {
-    return `This action removes a #${id} teacher`;
+  async remove(cin: string) {
+    const teacher = await this.findOne(cin);
+    if (teacher == null) {
+      throw new NotFoundException("this Teacher doasn't exist");
+    }
+    await this.prismaService.availability.deleteMany({
+      where: {
+        teacherCin: cin
+      }
+    });
+    await this.prismaService.teacher.delete({
+      where: {
+        cin
+      }
+    });
+    return `Teacher with CIN ${cin} has been successfully deleted.`;
   }
 }

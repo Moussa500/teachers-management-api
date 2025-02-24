@@ -7,23 +7,23 @@ import { UpdateTeacherDto } from './dto/update-teacher.dto';
 export class TeacherController {
   constructor(private readonly teacherService: TeacherService) {}
   @Post()
-  create(@Body() createTeacherDto: CreateTeacherDto) {
+  create(@Body() createTeacherDto: CreateTeacherDto[]) {
     return this.teacherService.create(createTeacherDto);
   }
   @Get()
   findAll() {
     return this.teacherService.findAll();
   }
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.teacherService.findOne(+id);
+  @Get(':cin')
+  findOne(@Param('cin') cin: string) {
+    return this.teacherService.findOne(cin);
   }
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateTeacherDto: UpdateTeacherDto) {
-    return this.teacherService.update(+id, updateTeacherDto);
+  @Patch(':cin')
+  update(@Param('cin') cin: string, @Body() updateTeacherDto: UpdateTeacherDto) {
+    return this.teacherService.update(cin, updateTeacherDto);
   }
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.teacherService.remove(+id);
+  @Delete(':cin')
+  remove(@Param('cin') cin: string) {
+    return this.teacherService.remove(cin);
   }
 }

@@ -11,7 +11,7 @@ CREATE TABLE "Teacher" (
 
 -- CreateTable
 CREATE TABLE "Availability" (
-    "id" TEXT NOT NULL,
+    "id" TEXT NOT NULL ,
     "teacherCin" TEXT NOT NULL,
     "day" TEXT NOT NULL,
     "startHour" TEXT NOT NULL,

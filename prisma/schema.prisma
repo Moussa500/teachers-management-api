@@ -24,7 +24,7 @@ model Teacher {
   updatedAt      DateTime       @updatedAt
 }
 model Availability {
-  id         String   @id @default(cuid())
+  id         String   @id  @default(cuid())
   teacher    Teacher  @relation(fields: [teacherCin], references: [cin])
   teacherCin String
   day        String
