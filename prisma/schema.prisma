@@ -43,7 +43,7 @@ model Subject {
   groupeName   String?
   lesson       Lesson?
   group        Group?   @relation(fields: [groupeName], references: [name])
-  teacher      Teacher?  @relation(fields: [teacherCin], references: [cin])
+  teacher      Teacher? @relation(fields: [teacherCin], references: [cin])
 }
 
 model Group {
@@ -68,26 +68,25 @@ model Student {
 }
 
 model ClassRoom {
-  id        String   @id @default(cuid())
-  name      String
+  number    Int   @unique
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   Lesson    Lesson?
 }
 
 model Lesson {
-  groupId     String
-  classRoomId String    @unique
-  teacherCin  String
-  subjectId   String    @unique
-  day         String
-  startHour   String
-  endHour     String
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
-  classRoom   ClassRoom @relation(fields: [classRoomId], references: [id])
-  group       Group     @relation(fields: [groupId], references: [id])
-  subject     Subject   @relation(fields: [subjectId], references: [id])
-  teacher     Teacher   @relation(fields:  [teacherCin], references: [cin])
-  @@unique([groupId, teacherCin, subjectId, classRoomId])
+  groupId         String
+  classRoomNumber Int    @unique
+  teacherCin      String
+  subjectId       String    @unique
+  day             String
+  startHour       String
+  endHour         String
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+  classRoom       ClassRoom @relation(fields: [classRoomNumber], references: [number])
+  group           Group     @relation(fields: [groupId], references: [id])
+  subject         Subject   @relation(fields: [subjectId], references: [id])
+  teacher         Teacher   @relation(fields: [teacherCin], references: [cin])
+  @@unique([groupId, teacherCin, subjectId, classRoomNumber])
 }

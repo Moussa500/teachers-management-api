@@ -5,7 +5,7 @@ import { UpdateSubjectDto } from './dto/update-subject.dto';
 
 @Injectable()
 export class SubjectService {
-  constructor(private prismaService: PrismaService) { }
+  constructor(private prismaService: PrismaService) {}
   async create(dtos: CreateSubjectDto[]) {
     const subjects = await this.prismaService.subject.createMany({
       data: dtos.map(dto => ({
